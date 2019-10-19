@@ -1,0 +1,13 @@
+name = "DigilentWaveForms"
+uuid = "90c6a8ac-129f-4ce1-be23-9dee1ca31d3e"
+authors = ["Ian Butterworth"]
+version = "0.1.0"
+
+[compat]
+julia = "0.7"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
