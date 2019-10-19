@@ -1,11 +1,14 @@
-HDWF hdwf;
-STS sts;
-double vUSB, aUSB, vAUX, aAUX;
-int fOn;
-char szError[512] = {0};
+hdwf = HDWF(0)
+sts = STS(0)
+vUSB = Float64(0)
+aUSB = Float64(0)
+vAUX = Float64(0)
+aAUX = Float64(0)
+fOn = 0
+szError = zeros(Cchar, 512)
 
 @info "Automatically opening the first available device"
-if !FDwfDeviceOpen(-1, &hdwf)
+if !FDwfDeviceOpen(-1, Ref(hdwf))
     FDwfGetLastErrorMsg(szError)
     error("Device open failed: $szError")
 end
@@ -26,15 +29,15 @@ for i in 1:60
     FDwfAnalogIOStatus(hdwf)
 
     # supply monitor
-    FDwfAnalogIOChannelNodeStatus(hdwf, 2, 0, &vUSB)
-    FDwfAnalogIOChannelNodeStatus(hdwf, 2, 1, &aUSB)
-    FDwfAnalogIOChannelNodeStatus(hdwf, 3, 0, &vAUX)
-    FDwfAnalogIOChannelNodeStatus(hdwf, 3, 1, &aAUX)
+    FDwfAnalogIOChannelNodeStatus(hdwf, 2, 0, Ref(vUSB))
+    FDwfAnalogIOChannelNodeStatus(hdwf, 2, 1, Ref(aUSB))
+    FDwfAnalogIOChannelNodeStatus(hdwf, 3, 0, Ref(vAUX))
+    FDwfAnalogIOChannelNodeStatus(hdwf, 3, 1, Ref(aAUX))
 
     println("USB: \t$vUSB V \t$aUSB A AUX: \t$vAUX V \t$aAUX A")
 
     # in case of over-current condition the supplies are disabled
-    FDwfAnalogIOEnableStatus(hdwf, &fOn)
+    FDwfAnalogIOEnableStatus(hdwf, Ref(fOn))
     if !fOn
         // re-enable supplies
         FDwfAnalogIOEnableSet(hdwf, false)

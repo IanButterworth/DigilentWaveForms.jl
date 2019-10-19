@@ -5,12 +5,12 @@ import Libdl
 # Load in `deps.jl`, complaining if it does not exist
 const depsjl_path = joinpath(@__DIR__, "..", "deps", "deps.jl")
 if !isfile(depsjl_path)
-    error("DigilentWaveForms was not build properly. Please run Pkg.build(\"DigilentWaveForms\").")
+    error("DigilentWaveForms was not built properly. Please run Pkg.build(\"DigilentWaveForms\").")
 end
 include(depsjl_path)
 # Module initialization function
 function __init__()
-    check_deps()
+    # check_deps()
 end
 
 using CEnum
@@ -20,6 +20,9 @@ export Ctm, Ctime_t, Cclock_t
 
 include(joinpath(@__DIR__, "..", "gen", "libdwf_common.jl"))
 include(joinpath(@__DIR__, "..", "gen", "libdwf_api.jl"))
+
+include("enumeration.jl")
+include("powersupplies.jl")
 
 # export everything
 #foreach(names(@__MODULE__, all=true)) do s
