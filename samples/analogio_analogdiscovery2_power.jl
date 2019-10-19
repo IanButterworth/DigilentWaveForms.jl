@@ -1,4 +1,4 @@
-hdwf = Ref(HDWF)
+HDWF hdwf;
 STS sts;
 double vUSB, aUSB, vAUX, aAUX;
 int fOn;
