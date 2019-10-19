@@ -1,40 +1,31 @@
 module DigilentWaveForms
 
 import Libdl
-# Include build configuration
-try
-  include(joinpath(@__DIR__, "..", "deps", "deps.jl"))
-catch
-  error("Package configuration file missing, run 'Pkg.build(\"DigilentWaveForms\")' to configure.")
+
+# Load in `deps.jl`, complaining if it does not exist
+const depsjl_path = joinpath(@__DIR__, "..", "deps", "deps.jl")
+if !isfile(depsjl_path)
+    error("DigilentWaveForms was not build properly. Please run Pkg.build(\"DigilentWaveForms\").")
 end
-
-include("wrapper/dwf_common.jl")
-
-function checkerror(err::dwfError)
-  if err != dwfError(0)
-    throw(ErrorException("Digilent WaveForms SDK error: $err"))
-  end
-  return nothing
-end
-
-include("wrapper/dwf_api.jl")
-
-# export everything dwf*
-foreach(names(@__MODULE__, all=true)) do s
-  if startswith(string(s), "dwf")
-    @eval export $s
-  end
-end
-
-
-# Include interface
-# include("something.jl")
-
-
-
-# Create a System object at runtime
+include(depsjl_path)
+# Module initialization function
 function __init__()
-  global dwfsys = System()
+    check_deps()
 end
+
+using CEnum
+
+include(joinpath(@__DIR__, "..", "gen", "ctypes.jl"))
+export Ctm, Ctime_t, Cclock_t
+
+include(joinpath(@__DIR__, "..", "gen", "libdwf_common.jl"))
+include(joinpath(@__DIR__, "..", "gen", "libdwf_api.jl"))
+
+# export everything
+#foreach(names(@__MODULE__, all=true)) do s
+#    if startswith(string(s), "SOME_PREFIX")
+#        @eval export $s
+#    end
+#end
 
 end # module

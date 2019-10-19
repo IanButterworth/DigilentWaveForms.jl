@@ -8,7 +8,7 @@ function find_dwf()
     path = "/usr/local/lib"
     libdwf = "dwf"
   else
-    @error "DigilentWaveForms.jl only supported on Linux, and MacOS platforms"
+    error("DigilentWaveForms.jl only supported on Linux, and MacOS platforms")
   end
 
   return path, libdwf
@@ -20,7 +20,7 @@ function configure()
   path, libdwf = find_dwf()
   libdwf_C = find_library(libdwf,[path])
 
-  libdwf_C != "" || @error "Digilent WaveForm SDK cannot be found"
+  libdwf_C != "" || error("Digilent WaveForm SDK cannot be found")
 
   open(joinpath(@__DIR__, "deps.jl"), "w") do f
     write(f, """
