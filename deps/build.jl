@@ -5,7 +5,7 @@ function find_dwf()
     path = "/usr/lib"
     libdwf = "libdwf.so"
   elseif Sys.isapple()
-    path = "/usr/local/lib"
+    path = "/Library/Frameworks/dwf.framework"
     libdwf = "dwf"
   else
     error("DigilentWaveForms.jl only supported on Linux, and MacOS platforms")
