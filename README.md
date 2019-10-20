@@ -1,6 +1,14 @@
-# DigilentWaveForms
+# DigilentWaveForms.jl
 
 Work in progress. Not useful yet.
+
+A Julia interface to the Digilent WaveForms SDK, to interact with Digilent devices:
+- Analog Discovery (Legacy)
+- Analog Discovery 2
+- Analog Discovery 2 - NI Edition
+- Digital Discovery
+- Electronics Explore
+
 
 [![Build Status](https://travis-ci.com/ianshmean/DigilentWaveForms.jl.svg?branch=master)](https://travis-ci.com/ianshmean/DigilentWaveForms.jl)
 [![Codecov](https://codecov.io/gh/ianshmean/DigilentWaveForms.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/ianshmean/DigilentWaveForms.jl)
