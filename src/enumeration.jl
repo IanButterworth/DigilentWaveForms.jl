@@ -7,7 +7,7 @@ Base.@kwdef struct Device
     hwdf = Ref(HDWF(0))
 end
 
-function enumdev(i::Cint)
+function enumdev(i<:Integer)
     # Digilent WaveForms SDK uses 0 based indexing
     szDeviceName = zeros(Cchar, 32)
     szSN = zeros(Cchar, 32)
