@@ -31,7 +31,8 @@ N.B. Only Linux and MacOS currently supported.
 
 ```julia
 using DigilentWaveForms
-listdevices()
+devices = devicelist()
+dev = devices[1]
 ```
 
 ## Developer Notes
