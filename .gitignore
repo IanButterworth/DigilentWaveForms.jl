@@ -6,3 +6,4 @@
 /dev/
 deps/deps.jl
 deps/build.log
+gen/LibTemplate.jl

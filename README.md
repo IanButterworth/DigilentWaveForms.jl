@@ -33,3 +33,7 @@ N.B. Only Linux and MacOS currently supported.
 using DigilentWaveForms
 listdevices()
 ```
+
+## Developer Notes
+
+To generate wrappers run `gen/wrap.jl`
