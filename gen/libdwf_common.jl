@@ -1,6 +1,6 @@
 # Automatically generated using Clang.jl
 
-const TRUE = true
+
 const DWFINC = TRUE
 
 # Skipping MacroDefinition: IsBitSet ( fs , bit ) ( ( fs & ( 1 << bit ) ) != 0 )

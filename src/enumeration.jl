@@ -1,6 +1,6 @@
 function listdevices()
-    cDevice = Int32(0)
-    cChannel = Int32(0)
+    cDevice = Cint(0)
+    cChannel = Cint(0)
     hzFreq = Cdouble(0)
     szDeviceName = zeros(Cchar, 32)
     szSN = zeros(Cchar, 32)
@@ -9,8 +9,7 @@ function listdevices()
     szError = zeros(Cchar, 512)
 
     # detect connected all supported devices
-    #if FDwfEnum(enumfilterAll, Ref(cDevice)) == 0
-    if FDwfEnum(Int32(0), Ref(cDevice)) == 0
+    if FDwfEnum(enumfilterAll, Ref(cDevice)) == 0
         FDwfGetLastErrorMsg(szError)
         error("FDwfEnum: $szError")
     end
@@ -31,11 +30,12 @@ function listdevices()
             end
             FDwfAnalogInChannelCount(hdwf, Ref(cChannel))
             FDwfAnalogInFrequencyInfo(hdwf, C_NULL, Ref(hzFreq))
-            println("number of analog input channels: $cChannel maximum freq.: $hzFreq Hz");
+            println("number of analog input channels: $cChannel maximum freq.: $hzFreq Hz")
             FDwfDeviceClose(hdwf)
             hdwf = hdwfNone
         end
     end
     # before application exit make sure to close all opened devices by this process
-    FDwfDeviceCloseAll();
+    FDwfDeviceCloseAll()
+    return nothing
 end

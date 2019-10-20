@@ -21,3 +21,12 @@ wc = init(; headers = LIBDWF_HEADERS,
             )
 
 run(wc)
+
+open(joinpath(@__DIR__, "libdwf_fixes.jl"), "w") do io
+    write(io, "# manual fixes\n\n")
+    write(io, "const TRUE = true #fix for first line in libdwf_common.jl\n\n")
+end
+
+# Manually wrapping the consts, as dwf.h uses consts instead of enums
+include("wrapconsts.jl")
+wrapconsts(LIBDWF_HEADERS[1], joinpath(@__DIR__, "libdwf_consts.jl"))

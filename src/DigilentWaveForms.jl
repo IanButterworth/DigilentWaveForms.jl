@@ -18,8 +18,11 @@ using CEnum
 include(joinpath(@__DIR__, "..", "gen", "ctypes.jl"))
 export Ctm, Ctime_t, Cclock_t
 
+include(joinpath(@__DIR__, "..", "gen", "libdwf_fixes.jl"))
 include(joinpath(@__DIR__, "..", "gen", "libdwf_common.jl"))
+include(joinpath(@__DIR__, "..", "gen", "libdwf_consts.jl"))
 include(joinpath(@__DIR__, "..", "gen", "libdwf_api.jl"))
+
 
 include("enumeration.jl")
 include("powersupplies.jl")
