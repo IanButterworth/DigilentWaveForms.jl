@@ -1,5 +1,6 @@
+export monitorpowersupplies
 
-function cyclepowersupplies()
+function monitorpowersupplies()
     hdwf = HDWF(0)
     sts = STS(0)
     vUSB = Cdouble(0)

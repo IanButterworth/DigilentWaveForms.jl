@@ -1,3 +1,5 @@
+export listdevices
+
 function listdevices()
     cDevice = Cint(0)
     cChannel = Cint(0)
