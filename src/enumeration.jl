@@ -1,9 +1,5 @@
 export listdevices
 
-function printcstring(cstring::Vector{Cchar})
-    return unsafe_string(pointer(cstring))
-end
-
 function listdevices()
     cDevice = Ref(Cint(0))
     cChannel = Ref(Cint(0))
@@ -25,13 +21,13 @@ function listdevices()
         # we use 0 based indexing
         FDwfEnumDeviceName(i, szDeviceName);
         FDwfEnumSN(i, szSN);
-        println("Device: $(i+1) name: $(printcstring(szDeviceName)) $(printcstring(szSN))")
+        println("Device: $(i+1) name: $(str(szDeviceName)) $(str(szSN))")
         # before opening, check if the device isn�t already opened by other application, like: WaveForms
         FDwfEnumDeviceIsOpened(i, fIsInUse);
         if fIsInUse != 1
             if FDwfDeviceOpen(i, hdwf) != 1
                 FDwfGetLastErrorMsg(szError)
-                println("FDwfDeviceOpen: $(printcstring(szError))")
+                println("FDwfDeviceOpen: $(str(szError))")
                 break
             end
             FDwfAnalogInChannelCount(hdwf[], cChannel)

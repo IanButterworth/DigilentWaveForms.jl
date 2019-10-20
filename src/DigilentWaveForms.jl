@@ -23,7 +23,7 @@ include(joinpath(@__DIR__, "..", "gen", "libdwf_common.jl"))
 include(joinpath(@__DIR__, "..", "gen", "libdwf_consts.jl"))
 include(joinpath(@__DIR__, "..", "gen", "libdwf_api.jl"))
 
-
+include("utils.jl")
 include("enumeration.jl")
 include("powersupplies.jl")
 
