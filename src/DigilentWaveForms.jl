@@ -25,7 +25,9 @@ include(joinpath(@__DIR__, "..", "gen", "libdwf_api.jl"))
 
 include("utils.jl")
 include("enumeration.jl")
+
 include("powersupplies.jl")
+include("analogin.jl")
 
 # export everything
 #foreach(names(@__MODULE__, all=true)) do s
