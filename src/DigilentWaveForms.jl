@@ -13,7 +13,6 @@ function __init__()
     # check_deps()
 end
 
-using CEnum
 
 include(joinpath(@__DIR__, "..", "gen", "ctypes.jl"))
 export Ctm, Ctime_t, Cclock_t
