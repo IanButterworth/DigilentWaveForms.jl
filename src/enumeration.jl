@@ -1,22 +1,32 @@
 export devicelist
 
-Base.@kwdef mutable struct Device
+Base.@kwdef mutable struct DWFDevice
     enumid::Cint
     name::String
     serial::String
     hdwf = Ref(HDWF(0))
 end
-display(dev::Device) = println("ID: $(dev.enumid)\nName: $(dev.name)\nSerial Number: $(dev.serial)")
+display(dev::DWFDevice) = println("ID: $(dev.enumid)\nName: $(dev.name)\nSerial Number: $(dev.serial)")
 
-function enumdev(i)
+"""
+    enumdev(i<:Integer)
+
+Return device by enumeration id.
+"""
+function enumdev(i::T) where {T<:Integer}
     # Digilent WaveForms SDK uses 0 based indexing
     szDeviceName = zeros(Cchar, 32)
     szSN = zeros(Cchar, 32)
     FDwfEnumDeviceName(i, szDeviceName)
     FDwfEnumSN(i, szSN)
-    return Device(enumid=i, name=str(szDeviceName), serial=name=str(szSN))
+    return DWFDevice(enumid=i, name=str(szDeviceName), serial=name=str(szSN))
 end
 
+"""
+    devicelist(;info::Bool=false, silent::Bool=false)
+
+Show device list and return vector of device objects.
+"""
 function devicelist(;info::Bool=false, silent::Bool=false)
     cDevice = Ref(Cint(0))
     szError = zeros(Cchar, 512)
@@ -28,7 +38,7 @@ function devicelist(;info::Bool=false, silent::Bool=false)
     end
     # list information about each device
     !silent && @info "Found $(cDevice[]) devices:"
-    devices = Device[]
+    devices = DWFDevice[]
     for i in 0:cDevice[]-1
 
         dev = enumdev(i)
@@ -38,7 +48,7 @@ function devicelist(;info::Bool=false, silent::Bool=false)
         # before opening, check if the device isn�t already opened by other application, like: WaveForms
 
         if info
-            if !enumDevOpen(dev.enumid)
+            if !open(dev)
                 open!(dev)
                 infostring = devinfo(dev)
                 println(infostring)
@@ -54,12 +64,34 @@ function devicelist(;info::Bool=false, silent::Bool=false)
     return devices
 end
 
-function enumDevOpen(i::T) where {T<:Integer}
+"""
+    open(dev::DWFDevice)
+
+Return whether device is open
+"""
+function open(dev::DWFDevice)
     fIsInUse = Ref(Cint(0))
-    FDwfEnumDeviceIsOpened(i, fIsInUse)
-    return fIsInUse == 1
+    FDwfEnumDeviceIsOpened(dev.enumid, fIsInUse)
+    return fIsInUse[] == 1
 end
-function open!(dev::Device)
+
+"""
+    checkopen(dev::DWFDevice)
+
+Check & error whether device is open
+"""
+function checkopen(dev::DWFDevice)
+    #TODO: Check not working
+    #!open(dev) && error("Device isn't open")
+    return nothing
+end
+
+"""
+    open!(dev::DWFDevice)
+
+Open device.
+"""
+function open!(dev::DWFDevice)
     if FDwfDeviceOpen(dev.enumid, dev.hdwf) != 1
         szError = zeros(Cchar, 512)
         FDwfGetLastErrorMsg(szError)
@@ -67,16 +99,34 @@ function open!(dev::Device)
     end
     return nothing
 end
-function close!(dev::Device)
+
+"""
+    close!(dev::DWFDevice)
+
+Close device.
+"""
+function close!(dev::DWFDevice)
     FDwfDeviceClose(dev.hdwf[])
-    dev.hdwf = hdwfNone
+    dev.hdwf = Ref(hdwfNone)
     return nothing
 end
+
+"""
+    closeall!()
+
+Close all devices.
+"""
 function closeall!()
     FDwfDeviceCloseAll()
     return nothing
 end
-function devinfo(dev::Device)
+
+"""
+    devinfo(dev::DWFDevice)
+
+Return some device information.
+"""
+function devinfo(dev::DWFDevice)
     numchannels = AnalogInChannelCount(dev)
     maxfreq = AnalogInFrequencyInfo(dev)
     return "Number of analog input channels: $(numchannels). Maximum freq.: $(maxfreq) Hz"

@@ -1,55 +1,119 @@
 export monitorpowersupplies
 
-function monitorpowersupplies()
-    hdwf = HDWF(0)
-    sts = STS(0)
-    vUSB = Cdouble(0)
-    aUSB = Cdouble(0)
-    degDevice = Cdouble(0)
-    vAUX = Cdouble(0)
-    aAUX = Cdouble(0)
-    fOn = Int32(0)
-    szError = zeros(Cchar, 512)
+"""
+    enablePositivePowerSupply!(dev::DWFDevice)
 
-    @info "Automatically opening the first available device"
-    if FDwfDeviceOpen(-1, Ref(hdwf)) != 1
-        FDwfGetLastErrorMsg(szError)
-        error("Device open failed: $szError")
-    end
+Enable positive power supply. Remember to AnalogIOEnable!(dev).
+"""
+function enablePositivePowerSupply!(dev::DWFDevice)
+    checkopen(dev)
+    FDwfAnalogIOChannelNodeSet(dev.hdwf[], 0, 0, 3)
+    return nothing
+end
 
-    # set up analog IO channel nodes
-    # enable positive supply
-    FDwfAnalogIOChannelNodeSet(hdwf, 0, 0, 3)
-    # enable negative supply
-    FDwfAnalogIOChannelNodeSet(hdwf, 1, 0, 3)
-    # master enable
-    FDwfAnalogIOEnableSet(hdwf, true)
+"""
+    setPositivePowerSupply!(dev::DWFDevice, voltage::T) where {T<:AbstractFloat}
 
-    @info "Total supply power and load percentage:"
-    for i in 1:5
-        # wait 1 second between readings
-        sleep(1)
-        # fetch analogIO status from device
-        FDwfAnalogIOStatus(hdwf)
+Set the positive power supply voltage.
+"""
+function setPositivePowerSupply!(dev::DWFDevice, voltage::T) where {T<:Real}
+    checkopen(dev)
+    (voltage < 0) && error("Positive voltage should be positive")
+    FDwfAnalogIOChannelNodeSet(dev.hdwf[], 0, 1, Cdouble(voltage))
+    return nothing
+end
 
-        # supply monitor
-        FDwfAnalogIOChannelNodeStatus(hdwf, 2, 0, Ref(vUSB))
-        FDwfAnalogIOChannelNodeStatus(hdwf, 2, 1, Ref(aUSB))
-        FDwfAnalogIOChannelNodeStatus(hdwf, 2, 2, Ref(degDevice)); #added from systemmonitor example
-        FDwfAnalogIOChannelNodeStatus(hdwf, 3, 0, Ref(vAUX))
-        FDwfAnalogIOChannelNodeStatus(hdwf, 3, 1, Ref(aAUX))
+"""
+    enableNegativePowerSupply!(dev::DWFDevice)
 
-        println("USB: \t$vUSB V \t$aUSB A \tAUX: \t$vAUX V \t$aAUX A \tTemp: $degDevice")
+Enable negative power supply. Remember to AnalogIOEnable!(dev).
+"""
+function enableNegativePowerSupply!(dev::DWFDevice)
+    checkopen(dev)
+    FDwfAnalogIOChannelNodeSet(dev.hdwf[], 1, 0, 3)
+    return nothing
+end
 
-        # in case of over-current condition the supplies are disabled
-        FDwfAnalogIOEnableStatus(hdwf, Ref(fOn))
-        if fOn != 1
-            # re-enable supplies
-            FDwfAnalogIOEnableSet(hdwf, false)
-            FDwfAnalogIOEnableSet(hdwf, true)
-        end
-    end
+"""
+    setNegativePowerSupply!(dev::DWFDevice, voltage::T) where {T<:AbstractFloat}
 
-    # close the device
-    FDwfDeviceClose(hdwf)
+Set the negative power supply voltage.
+"""
+function setNegativePowerSupply!(dev::DWFDevice, voltage::T) where {T<:Real}
+    checkopen(dev)
+    (voltage > 0) && error("Negative voltage should be negative")
+    FDwfAnalogIOChannelNodeSet(dev.hdwf[], 1, 1, Cdouble(voltage))
+    return nothing
+end
+
+"""
+    AnalogIOEnable!(dev::DWFDevice; state::Bool=true)
+
+Enable/disable analog IO. (Enable by default)
+"""
+function AnalogIOEnable!(dev::DWFDevice; state::Bool=true)
+    checkopen(dev)
+    FDwfAnalogIOEnableSet(dev.hdwf[], state)
+    return nothing
+end
+
+"""
+    AnalogIOReset!(dev::DWFDevice)
+
+Disable then enable analog IO. Useful for resetting after overcurrent protection.
+"""
+function AnalogIOReset!(dev::DWFDevice)
+    checkopen(dev)
+    FDwfAnalogIOEnableSet(dev.hdwf[], false)
+    FDwfAnalogIOEnableSet(dev.hdwf[], true)
+    return nothing
+end
+
+"""
+    AnalogIOEnabled(dev::DWFDevice)
+
+Return whether the analogIO is enabled.
+"""
+function AnalogIOEnabled(dev::DWFDevice)
+    checkopen(dev)
+    fOn = Ref(Int32(0))
+    FDwfAnalogIOEnableStatus(hdwf[], fOn)
+    return fOn[] == 1
+end
+
+"""
+    PowerSupplyMonitor(dev::DWFDevice)
+
+Monitor the device power draw via both USB and AUX power supplies.
+"""
+function PowerSupplyMonitor(dev::DWFDevice)
+    checkopen(dev)
+    vUSB = Ref(Cdouble(0))
+    aUSB = Ref(Cdouble(0))
+    vAUX = Ref(Cdouble(0))
+    aAUX = Ref(Cdouble(0))
+
+    # fetch analogIO status from device
+    FDwfAnalogIOStatus(dev.hdwf[])
+
+    # supply monitor
+    FDwfAnalogIOChannelNodeStatus(dev.hdwf[], 2, 0, vUSB)
+    FDwfAnalogIOChannelNodeStatus(dev.hdwf[], 2, 1, aUSB)
+    FDwfAnalogIOChannelNodeStatus(dev.hdwf[], 3, 0, vAUX)
+    FDwfAnalogIOChannelNodeStatus(dev.hdwf[], 3, 1, aAUX)
+
+    return ("USB" => ("voltage" => vUSB[], "current" => aUSB[]),
+    "AUX" => ("voltage" => vAUX[], "current" => aAUX[]))
+
+end
+
+function TemperatureMonitor(dev::DWFDevice)
+    checkopen(dev)
+    degDevice = Ref(Cdouble(0))
+
+    # fetch analogIO status from device
+    FDwfAnalogIOStatus(dev.hdwf[])
+
+    FDwfAnalogIOChannelNodeStatus(dev.hdwf[], 2, 2, degDevice); #added from systemmonitor example
+    return degDevice[]
 end
