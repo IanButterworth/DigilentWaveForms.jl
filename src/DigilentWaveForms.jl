@@ -28,6 +28,7 @@ include("enumeration.jl")
 
 include("powersupplies.jl")
 include("analogin.jl")
+include("analogout.jl")
 
 # export everything
 #foreach(names(@__MODULE__, all=true)) do s
