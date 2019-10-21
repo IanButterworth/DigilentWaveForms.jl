@@ -3,11 +3,11 @@
 Work in progress. Not useful yet.
 
 A Julia interface to the Digilent WaveForms SDK, to interact with Digilent devices:
-- Analog Discovery (Legacy)
+- Analog Discovery (Legacy) [untested]
 - Analog Discovery 2
-- Analog Discovery 2 - NI Edition
-- Digital Discovery
-- Electronics Explore
+- Analog Discovery 2 - NI Edition [untested]
+- Digital Discovery [untested]
+- Electronics Explore [untested]
 
 
 [![Build Status](https://travis-ci.com/ianshmean/DigilentWaveForms.jl.svg?branch=master)](https://travis-ci.com/ianshmean/DigilentWaveForms.jl)
