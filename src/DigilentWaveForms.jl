@@ -24,6 +24,7 @@ include(joinpath(@__DIR__, "..", "gen", "libdwf_api.jl"))
 
 include("utils.jl")
 include("enumeration.jl")
+include("system.jl")
 
 include("powersupplies.jl")
 include("analogin.jl")
