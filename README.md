@@ -68,6 +68,17 @@ for i in -5:0.1:5, j in -5:0.1:5
     sleep(0.01)
 end
 
+# Loop through enabling/disabling DigitalIO pins 0 and 1
+for i in 1:10
+    DigilentWaveForms.DigitalOutSet!(dev, 1, true)
+    wait(Timer(0.01))
+    DigilentWaveForms.DigitalOutSet!(dev, 1, false)
+    wait(Timer(0.01))
+    DigilentWaveForms.DigitalOutSet!(dev, 0, true)
+    wait(Timer(0.01))
+    DigilentWaveForms.DigitalOutSet!(dev, 0, false)
+    wait(Timer(0.01))
+end
 
 DigilentWaveForms.close!(dev)
 
