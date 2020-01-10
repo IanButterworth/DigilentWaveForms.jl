@@ -12,7 +12,6 @@ function find_dwf()
   end
 
   return path, libdwf
-
 end
 
 function configure()
@@ -20,7 +19,7 @@ function configure()
   path, libdwf = find_dwf()
   libdwf = find_library(libdwf,[path])
 
-  libdwf != "" || error("Digilent WaveForm SDK cannot be found")
+  libdwf != "" || @error "Digilent WaveForm SDK cannot be found"
 
   open(joinpath(@__DIR__, "deps.jl"), "w") do f
     write(f, """

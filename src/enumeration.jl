@@ -95,7 +95,7 @@ function open!(dev::DWFDevice)
     if FDwfDeviceOpen(dev.enumid, dev.hdwf) != 1
         szError = zeros(Cchar, 512)
         FDwfGetLastErrorMsg(szError)
-        @error "Device in use. FDwfDeviceOpen error: $(str(szError))"
+        error("Device in use. FDwfDeviceOpen error: $(str(szError))")
     end
     return nothing
 end
