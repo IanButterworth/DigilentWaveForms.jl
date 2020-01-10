@@ -30,6 +30,8 @@ include("powersupplies.jl")
 include("analogin.jl")
 include("analogout.jl")
 
+include("digitalout.jl")
+
 # export everything
 #foreach(names(@__MODULE__, all=true)) do s
 #    if startswith(string(s), "SOME_PREFIX")
